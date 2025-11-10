@@ -268,4 +268,42 @@ export class AuthController {
       },
     };
   }
+
+  @Public()
+  @Post('verify-refresh')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Verificar refresh token',
+    description: 'Verifica si un refresh token es válido sin generar nuevos tokens',
+  })
+  @ApiOkResponse({
+    description: 'Refresh token válido',
+    schema: {
+      type: 'object',
+      properties: {
+        valid: { type: 'boolean', example: true },
+      }
+    }
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Refresh token inválido o expirado',
+  })
+  async verifyRefreshToken(
+    @Req() request: Request,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    // Obtener refresh token de la cookie
+    const refreshToken = request.cookies?.refresh_token;
+    
+    if (!refreshToken) {
+      throw new UnauthorizedException('Refresh token no encontrado');
+    }
+
+    await this.authService.verifyRefreshToken(refreshToken);
+    
+    // Retornar solo access token
+    return { 
+      valid: true
+    };
+  }
 }

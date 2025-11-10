@@ -178,6 +178,16 @@ export class AuthService {
     return user;
   }
 
+  async verifyRefreshToken(refreshToken: string): Promise<void> {
+    try {
+      this.jwtService.verify(refreshToken, {
+        secret: this.configService.get('jwt.refreshSecret'),
+      });
+    } catch (error) {
+      throw new UnauthorizedException('Refresh token inválido o expirado');
+    }
+  }
+
   // Métodos para manejo híbrido de tokens
   getCookieOptions() {
     const isProduction = this.configService.get('NODE_ENV') === 'production';
