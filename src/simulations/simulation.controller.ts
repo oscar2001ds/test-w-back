@@ -137,8 +137,8 @@ export class SimulationController {
   ): Promise<SimulationListResponseDto> {
     // Validar autorización: mismo usuario o rol superior
     await this.authorizationService.validateUserResourceAccess(
-      authenticatedUser, 
-      targetUserId, 
+      authenticatedUser,
+      targetUserId,
       this.usersService
     );
 
@@ -149,7 +149,12 @@ export class SimulationController {
     );
 
     return {
-      simulations: result.simulations.map(simulation => simulation.toJSON()),
+      simulations: result.simulations.map(
+        simulation => {
+          simulation.returnRate = Math.round(simulation.returnRate * 10000) / 100;
+          return simulation.toJSON();
+        }
+      ),
       pagination: result.pagination,
     };
   }
@@ -172,12 +177,14 @@ export class SimulationController {
   ): Promise<SimulationStatsResponseDto> {
     // Validar autorización: mismo usuario o rol superior
     await this.authorizationService.validateUserResourceAccess(
-      authenticatedUser, 
-      targetUserId, 
+      authenticatedUser,
+      targetUserId,
       this.usersService
     );
 
-    return this.simulationService.getStatsByUser(targetUserId);
+    const stats = await this.simulationService.getStatsByUser(targetUserId);
+    stats.averageReturnRate = Math.round(stats.averageReturnRate * 10000) / 100;
+    return stats;
   }
 
   @Get(':id/user/:userId')
@@ -202,8 +209,8 @@ export class SimulationController {
   ): Promise<SimulationResponseDto> {
     // Validar autorización: mismo usuario o rol superior
     await this.authorizationService.validateUserResourceAccess(
-      authenticatedUser, 
-      targetUserId, 
+      authenticatedUser,
+      targetUserId,
       this.usersService
     );
 
@@ -242,8 +249,8 @@ export class SimulationController {
   ) {
     // Validar autorización: mismo usuario o rol superior
     await this.authorizationService.validateUserResourceAccess(
-      authenticatedUser, 
-      targetUserId, 
+      authenticatedUser,
+      targetUserId,
       this.usersService
     );
 
@@ -276,8 +283,8 @@ export class SimulationController {
   ): Promise<SimulationResponseDto> {
     // Validar autorización: mismo usuario o rol superior
     await this.authorizationService.validateUserResourceAccess(
-      authenticatedUser, 
-      targetUserId, 
+      authenticatedUser,
+      targetUserId,
       this.usersService
     );
 
@@ -308,8 +315,8 @@ export class SimulationController {
   ): Promise<SimulationResponseDto> {
     // Validar autorización: mismo usuario o rol superior
     await this.authorizationService.validateUserResourceAccess(
-      authenticatedUser, 
-      targetUserId, 
+      authenticatedUser,
+      targetUserId,
       this.usersService
     );
 
@@ -339,8 +346,8 @@ export class SimulationController {
   ): Promise<void> {
     // Validar autorización: mismo usuario o rol superior
     await this.authorizationService.validateUserResourceAccess(
-      authenticatedUser, 
-      targetUserId, 
+      authenticatedUser,
+      targetUserId,
       this.usersService
     );
 

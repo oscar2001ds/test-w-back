@@ -1,11 +1,11 @@
 import { Injectable, ForbiddenException, BadRequestException } from '@nestjs/common';
 import { User } from '../entities/user.entity';
-import { 
-  UserRole, 
-  canCreateRole, 
-  canModifyRole, 
+import {
+  UserRole,
+  canCreateRole,
+  canModifyRole,
   getAssignableRoles,
-  getRoleLevel 
+  getRoleLevel
 } from '../../common/enums/user-role.enum';
 import { UsersService } from '../users.service';
 
@@ -24,7 +24,8 @@ export class AuthorizationService {
   canUserModifyUser(currentUser: User, targetUser: User): boolean {
     // Un usuario siempre puede modificar su propio perfil (excepto rol)
     if (currentUser.id === targetUser.id) {
-      return true;
+      if (currentUser.role !== targetUser.role) throw new ForbiddenException('No puede cambiar su propio rol');
+      else return true;
     }
 
     // Verificar si puede modificar basado en roles
@@ -124,8 +125,8 @@ export class AuthorizationService {
    * Permite acceso si es el mismo usuario o si tiene un rol superior
    */
   async validateUserResourceAccess(
-    currentUser: User, 
-    targetUserId: number, 
+    currentUser: User,
+    targetUserId: number,
     usersService: UsersService
   ): Promise<void> {
     // Si es el mismo usuario, siempre permitir
