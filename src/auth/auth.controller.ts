@@ -1,15 +1,15 @@
-import { 
-  Body, 
-  Controller, 
-  Get, 
-  Post, 
-  UseGuards, 
-  HttpCode, 
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  UseGuards,
+  HttpCode,
   HttpStatus,
   Patch,
   Res,
   Req,
-  UnauthorizedException 
+  UnauthorizedException
 } from '@nestjs/common';
 import type { Response, Request } from 'express';
 import {
@@ -30,15 +30,14 @@ import { User } from '../users/entities/user.entity';
 import { LogIn } from './dto/log-in.dto';
 import { RegisterDto } from './dto/register.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
-import { 
-  UserResponseDto,
-  HybridLoginResponseDto 
+import {
+  HybridLoginResponseDto
 } from './dto/auth-response.dto';
 
 @ApiTags('Authentication')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
 
   @Public()
   @UseGuards(LocalAuthGuard)
@@ -61,15 +60,15 @@ export class AuthController {
     @Res({ passthrough: true }) response: Response,
   ): Promise<HybridLoginResponseDto> {
     const authResponse = await this.authService.login(user, loginDto.remember, loginDto.app);
-    
-    // Configurar cookie con refresh token
+
+    // Configurar cookie con access y refresh token 
     const cookieOptions = this.authService.getRefreshTokenCookieOptions();
+    response.cookie('access_token', authResponse.tokens.access_token, cookieOptions);
     response.cookie('refresh_token', authResponse.tokens.refresh_token, cookieOptions);
-    
+
     // Retornar solo access token en JSON
     return {
       user: authResponse.user,
-      access_token: authResponse.tokens.access_token,
     };
   }
 
@@ -91,15 +90,15 @@ export class AuthController {
     @Res({ passthrough: true }) response: Response,
   ): Promise<HybridLoginResponseDto> {
     const authResponse = await this.authService.register(registerDto);
-    
-    // Configurar cookie con refresh token
+
+    // Configurar cookie con access y refresh token 
     const cookieOptions = this.authService.getRefreshTokenCookieOptions();
+    response.cookie('access_token', authResponse.tokens.access_token, cookieOptions);
     response.cookie('refresh_token', authResponse.tokens.refresh_token, cookieOptions);
-    
+
     // Retornar solo access token en JSON
     return {
       user: authResponse.user,
-      access_token: authResponse.tokens.access_token,
     };
   }
 
@@ -132,21 +131,20 @@ export class AuthController {
   ) {
     // Obtener refresh token de la cookie
     const refreshToken = request.cookies?.refresh_token;
-    
+
     if (!refreshToken) {
       throw new UnauthorizedException('Refresh token no encontrado');
     }
 
     const tokens = await this.authService.refreshTokens(refreshToken);
-    
-    // Configurar nueva cookie con el nuevo refresh token
+
+    // Configurar nueva cookie con los nuevos tokens
     const cookieOptions = this.authService.getRefreshTokenCookieOptions();
+    response.cookie('access_token', tokens.access_token, cookieOptions);
     response.cookie('refresh_token', tokens.refresh_token, cookieOptions);
-    
-    // Retornar solo access token
-    return { 
+
+    return {
       success: true,
-      access_token: tokens.access_token 
     };
   }
 
@@ -169,32 +167,20 @@ export class AuthController {
     @Res({ passthrough: true }) response: Response,
   ): Promise<void> {
     await this.authService.logout(user.id);
-    
-    // Limpiar cookie del refresh token
+
+    // Limpiar cookie de access y refresh token
+    response.clearCookie('access_token', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      path: '/',
+    });
     response.clearCookie('refresh_token', {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
       path: '/',
     });
-  }
-
-  @UseGuards(JwtAuthGuard)
-  @Get('profile')
-  @ApiOperation({
-    summary: 'Obtener perfil',
-    description: 'Retorna la información del usuario autenticado',
-  })
-  @ApiOkResponse({
-    description: 'Perfil del usuario obtenido exitosamente',
-    type: UserResponseDto,
-  })
-  @ApiUnauthorizedResponse({
-    description: 'Token JWT inválido o expirado',
-  })
-  @ApiBearerAuth()
-  async getProfile(@GetUser() user: User) {
-    return this.authService.getProfile(user.id);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -251,7 +237,6 @@ export class AuthController {
   @ApiUnauthorizedResponse({
     description: 'Token JWT inválido o expirado',
   })
-  @ApiBearerAuth()
   async validateSession(@GetUser() user: User) {
     return {
       success: true,
@@ -294,15 +279,15 @@ export class AuthController {
   ) {
     // Obtener refresh token de la cookie
     const refreshToken = request.cookies?.refresh_token;
-    
+
     if (!refreshToken) {
       throw new UnauthorizedException('Refresh token no encontrado');
     }
 
     await this.authService.verifyRefreshToken(refreshToken);
-    
+
     // Retornar solo access token
-    return { 
+    return {
       valid: true
     };
   }

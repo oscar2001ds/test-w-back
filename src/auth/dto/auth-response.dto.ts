@@ -52,12 +52,6 @@ export class LoginResponseDto {
 export class HybridLoginResponseDto {
   @ApiProperty({ type: UserResponseDto })
   user: UserResponseDto;
-
-  @ApiProperty({ 
-    example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
-    description: 'JWT Access Token válido por 1 hora (Refresh token enviado en HttpOnly cookie)'
-  })
-  access_token: string;
 }
 
 export class RefreshResponseDto {
