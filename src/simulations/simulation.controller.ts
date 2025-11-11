@@ -72,6 +72,7 @@ export class SimulationController {
     @Body() createSimulationDto: CreateSimulationDto,
   ): Promise<SimulationResponseDto> {
     const simulation = await this.simulationService.create(user.id, createSimulationDto);
+    simulation.returnRate = Math.round(simulation.returnRate * 10000) / 100;
     return simulation.toJSON();
   }
 
@@ -215,6 +216,7 @@ export class SimulationController {
     );
 
     const simulation = await this.simulationService.findOneByUser(targetUserId, id);
+    simulation.returnRate = Math.round(simulation.returnRate * 10000) / 100;
     return simulation.toJSON();
   }
 
@@ -289,6 +291,7 @@ export class SimulationController {
     );
 
     const simulation = await this.simulationService.update(targetUserId, id, updateSimulationDto);
+    simulation.returnRate = Math.round(simulation.returnRate * 10000) / 100;
     return simulation.toJSON();
   }
 
@@ -321,6 +324,7 @@ export class SimulationController {
     );
 
     const simulation = await this.simulationService.updateStatus(targetUserId, id, updateStatusDto);
+    simulation.returnRate = Math.round(simulation.returnRate * 10000) / 100;
     return simulation.toJSON();
   }
 
