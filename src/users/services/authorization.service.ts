@@ -7,6 +7,7 @@ import {
   getAssignableRoles,
   getRoleLevel 
 } from '../../common/enums/user-role.enum';
+import { UsersService } from '../users.service';
 
 @Injectable()
 export class AuthorizationService {
@@ -116,5 +117,52 @@ export class AuthorizationService {
    */
   isRoleEqualOrHigher(role1: UserRole, role2: UserRole): boolean {
     return getRoleLevel(role1) >= getRoleLevel(role2);
+  }
+
+  /**
+   * Valida si un usuario puede acceder a recursos de otro usuario
+   * Permite acceso si es el mismo usuario o si tiene un rol superior
+   */
+  async validateUserResourceAccess(
+    currentUser: User, 
+    targetUserId: number, 
+    usersService: UsersService
+  ): Promise<void> {
+    // Si es el mismo usuario, siempre permitir
+    if (currentUser.id === targetUserId) {
+      return;
+    }
+
+    // Obtener el usuario objetivo para comparar roles
+    const targetUser = await usersService.findEntityById(targetUserId);
+    if (!targetUser) {
+      throw new BadRequestException('Usuario objetivo no encontrado');
+    }
+
+    // Verificar si el usuario actual puede modificar/acceder al usuario objetivo
+    if (!this.canUserModifyUser(currentUser, targetUser)) {
+      throw new ForbiddenException(
+        `No tiene permisos para acceder a los recursos del usuario con rol '${targetUser.role}'. ` +
+        `Su rol actual es '${currentUser.role}'.`
+      );
+    }
+  }
+
+  /**
+   * Versión simplificada que solo compara IDs y roles sin obtener entidad completa
+   */
+  validateSameUserOrSuperior(currentUser: User, targetUserId: number, targetUserRole: UserRole): void {
+    // Si es el mismo usuario, siempre permitir
+    if (currentUser.id === targetUserId) {
+      return;
+    }
+
+    // Verificar si el rol actual es superior al objetivo
+    if (!this.isRoleHigher(currentUser.role as UserRole, targetUserRole)) {
+      throw new ForbiddenException(
+        `No tiene permisos para acceder a los recursos del usuario con rol '${targetUserRole}'. ` +
+        `Su rol actual es '${currentUser.role}'.`
+      );
+    }
   }
 }

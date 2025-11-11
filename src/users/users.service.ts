@@ -1,9 +1,9 @@
-import { 
-  Injectable, 
-  NotFoundException, 
-  ConflictException, 
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
   BadRequestException,
-  ForbiddenException 
+  ForbiddenException
 } from '@nestjs/common';
 import { UsersRepository } from './users.repository';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -15,7 +15,7 @@ import { UserRole } from '../common/enums/user-role.enum';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly usersRepository: UsersRepository) {}
+  constructor(private readonly usersRepository: UsersRepository) { }
 
   async create(createUserDto: CreateUserDto): Promise<UserResponse> {
     // Verificar que el usuario no exista
@@ -54,6 +54,10 @@ export class UsersService {
 
   async findByEmailOrUsername(identifier: string): Promise<User | null> {
     return this.usersRepository.findByEmailOrUsername(identifier);
+  }
+
+  async findEntityById(id: number): Promise<User | null> {
+    return this.usersRepository.findById(id);
   }
 
   async update(id: number, updateUserDto: UpdateUserDto): Promise<UserResponse> {
@@ -120,7 +124,7 @@ export class UsersService {
   // Método para validación en autenticación
   async validateUser(identifier: string, password: string): Promise<User | null> {
     const user = await this.findByEmailOrUsername(identifier);
-    
+
     if (user && await user.validatePassword(password)) {
       return user;
     }
@@ -130,7 +134,7 @@ export class UsersService {
   // Método para validación por email únicamente
   async validateUserByEmail(email: string, password: string): Promise<User | null> {
     const user = await this.findByEmail(email);
-    
+
     if (user && await user.validatePassword(password)) {
       return user;
     }

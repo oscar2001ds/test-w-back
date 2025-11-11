@@ -5,13 +5,15 @@ import { ServerConfigModule } from './config/config.module';
 import { DatabaseModule } from './database/database.module';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
+import { SimulationModule } from './simulations/simulation.module';
 
 @Module({
   imports: [
     ServerConfigModule,
     DatabaseModule,
     UsersModule,
-    AuthModule
+    AuthModule,
+    SimulationModule,
   ],
   controllers: [AppController],
   providers: [AppService],

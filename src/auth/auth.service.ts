@@ -80,9 +80,13 @@ export class AuthService {
       const payload = this.jwtService.verify(refreshToken, {
         secret: this.configService.get('jwt.refreshSecret'),
       });
+      const userId = payload.sub;
 
-      // Buscar usuario por el refresh token en BD
-      const user = await this.usersService.findByRefreshToken(refreshToken);
+      if (!userId) {
+        throw new UnauthorizedException('Payload inválido en refresh token');
+      }
+      
+      const user = await this.usersService.findEntityById(userId);
       
       if (!user) {
         throw new UnauthorizedException('Refresh token inválido');

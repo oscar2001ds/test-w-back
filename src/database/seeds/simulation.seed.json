@@ -1,0 +1,93 @@
+[
+  {
+    "id": "550e8400-e29b-41d4-a716-446655440001",
+    "userId": 1,
+    "title": "Ahorro para casa propia",
+    "amount": 50000000,
+    "currency": "COP",
+    "paymentMethod": "monthly",
+    "startDate": "2024-01-01",
+    "endDate": "2026-01-01",
+    "termMonths": 24,
+    "returnRate": 0.125,
+    "status": "active"
+  },
+  {
+    "id": "550e8400-e29b-41d4-a716-446655440002",
+    "userId": 1,
+    "title": "Inversión educación hijos",
+    "amount": 25000000,
+    "currency": "COP",
+    "paymentMethod": "monthly",
+    "startDate": "2024-03-01",
+    "endDate": "2029-03-01",
+    "termMonths": 60,
+    "returnRate": 0.14,
+    "status": "active"
+  },
+  {
+    "id": "550e8400-e29b-41d4-a716-446655440003",
+    "userId": 2,
+    "title": "Fondo de emergencia",
+    "amount": 10000000,
+    "currency": "COP",
+    "paymentMethod": "annual",
+    "startDate": "2024-01-15",
+    "endDate": "2025-01-15",
+    "termMonths": 12,
+    "returnRate": 0.095,
+    "status": "active"
+  },
+  {
+    "id": "550e8400-e29b-41d4-a716-446655440004",
+    "userId": 2,
+    "title": "Inversión vacaciones",
+    "amount": 5000000,
+    "currency": "COP",
+    "paymentMethod": "monthly",
+    "startDate": "2023-06-01",
+    "endDate": "2024-06-01",
+    "termMonths": 12,
+    "returnRate": 0.095,
+    "status": "completed"
+  },
+  {
+    "id": "550e8400-e29b-41d4-a716-446655440005",
+    "userId": 1,
+    "title": "Plan de pensión complementario",
+    "amount": 100000000,
+    "currency": "COP",
+    "paymentMethod": "annual",
+    "startDate": "2024-01-01",
+    "endDate": "2034-01-01",
+    "termMonths": 120,
+    "returnRate": 0.155,
+    "status": "active"
+  },
+  {
+    "id": "550e8400-e29b-41d4-a716-446655440006",
+    "userId": 2,
+    "title": "Inversión corto plazo",
+    "amount": 15000000,
+    "currency": "COP",
+    "paymentMethod": "monthly",
+    "startDate": "2024-02-01",
+    "endDate": "2024-08-01",
+    "termMonths": 6,
+    "returnRate": 0.08,
+    "status": "paused"
+  },
+  {
+    "id": "550e8400-e29b-41d4-a716-446655440007",
+    "userId": 2,
+    "title": "Mi primera inversión",
+    "amount": 2000000,
+    "currency": "COP",
+    "paymentMethod": "monthly",
+    "startDate": "2024-01-01",
+    "endDate": "2025-01-01",
+    "termMonths": 12,
+    "returnRate": 0.095,
+    "status": "active"
+  }
+]
