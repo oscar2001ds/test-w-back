@@ -1,6 +1,7 @@
 import { CreationAttributes, Model, ModelStatic } from "sequelize";
-import { User } from "../models";
+import { User, Simulation } from "../models";
 import userJson from './user.seed.json';
+import simulationJson from './simulation.seed.json';
 
 export const seeds: Array<{
   model: ModelStatic<Model>;
@@ -9,5 +10,9 @@ export const seeds: Array<{
   {
     model: User,
     data: userJson,
+  },
+  {
+    model: Simulation,
+    data: simulationJson,
   },
 ];

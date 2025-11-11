@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { SequelizeModule, SequelizeModuleOptions } from '@nestjs/sequelize';
-import { User } from './models';
+import { User, Simulation } from './models';
 import { DatabaseService } from './database.service';
 
 @Module({
@@ -11,7 +11,7 @@ import { DatabaseService } from './database.service';
         const config = configService.get('database')!;
         return {
           ...config,
-          models: [User], // Registrar explícitamente los modelos
+          models: [User, Simulation], // Registrar explícitamente los modelos
         };
       },
       inject: [ConfigService],

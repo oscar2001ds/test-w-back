@@ -80,9 +80,13 @@ export class AuthService {
       const payload = this.jwtService.verify(refreshToken, {
         secret: this.configService.get('jwt.refreshSecret'),
       });
+      const userId = payload.sub;
 
-      // Buscar usuario por el refresh token en BD
-      const user = await this.usersService.findByRefreshToken(refreshToken);
+      if (!userId) {
+        throw new UnauthorizedException('Payload inválido en refresh token');
+      }
+      
+      const user = await this.usersService.findEntityById(userId);
       
       if (!user) {
         throw new UnauthorizedException('Refresh token inválido');
@@ -176,6 +180,16 @@ export class AuthService {
   async getProfile(userId: number) {
     const user = await this.usersService.findOne(userId);
     return user;
+  }
+
+  async verifyRefreshToken(refreshToken: string): Promise<void> {
+    try {
+      this.jwtService.verify(refreshToken, {
+        secret: this.configService.get('jwt.refreshSecret'),
+      });
+    } catch (error) {
+      throw new UnauthorizedException('Refresh token inválido o expirado');
+    }
   }
 
   // Métodos para manejo híbrido de tokens
