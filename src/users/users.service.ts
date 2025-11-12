@@ -3,19 +3,26 @@ import {
   NotFoundException,
   ConflictException,
   BadRequestException,
-  ForbiddenException
+  ForbiddenException,
+  Inject,
+  forwardRef
 } from '@nestjs/common';
 import { UsersRepository } from './users.repository';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ChangeRoleDto } from './dto/change-role.dto';
+import { RoleDto } from './dto/role.dto';
 import { User } from './entities/user.entity';
-import { UserResponse } from './interfaces/user.interface';
-import { UserRole } from '../common/enums/user-role.enum';
+import { UserResponse, UserStatsResponse } from './interfaces/user.interface';
+import { SimulationService } from '../simulations/services/simulation.service';
+import { UserRole } from 'src/common/enums/user-role.enum';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly usersRepository: UsersRepository) { }
+  constructor(
+    private readonly usersRepository: UsersRepository,
+    @Inject(forwardRef(() => SimulationService))
+    private readonly simulationService: SimulationService
+  ) { }
 
   async create(createUserDto: CreateUserDto): Promise<UserResponse> {
     // Verificar que el usuario no exista
@@ -34,6 +41,23 @@ export class UsersService {
       order: [['createdAt', 'DESC']]
     });
     return users.map(user => this.mapToResponse(user));
+  }
+
+  async findAllByRoleWithStats(role: UserRole): Promise<UserStatsResponse[]> {
+    const users = await this.usersRepository.findAll({
+      where: { role: role } as any,
+      order: [['createdAt', 'DESC']]
+    });
+
+    const usersWithStats = users.map(async (user) => {
+      const userStats = await this.simulationService.getStatsByUser(user.id);
+      userStats.averageReturnRate = Math.round(userStats.averageReturnRate * 10000) / 100;
+      return {
+        user: this.mapToResponse(user),
+        stats: userStats
+      };
+    });
+    return Promise.all(usersWithStats);
   }
 
   async findOne(id: number): Promise<UserResponse> {
@@ -155,7 +179,7 @@ export class UsersService {
   }
 
   // Método para cambiar rol de usuario
-  async changeRole(id: number, changeRoleDto: ChangeRoleDto): Promise<UserResponse> {
+  async changeRole(id: number, changeRoleDto: RoleDto): Promise<UserResponse> {
     const user = await this.usersRepository.findById(id);
     if (!user) {
       throw new NotFoundException(`Usuario con ID ${id} no encontrado`);

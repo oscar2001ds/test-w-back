@@ -1,3 +1,5 @@
+import { SimulationStats } from "src/simulations/interfaces/simulation.interface";
+
 export interface CreateUserAttributes {
   username: string;
   email: string;
@@ -27,6 +29,11 @@ export interface UserResponse {
   lastLoginAt?: Date;
   createdAt: Date;
   updatedAt: Date;
+}
+
+export interface UserStatsResponse {
+  user: UserResponse;
+  stats: SimulationStats;
 }
 
 export interface LoginCredentials {

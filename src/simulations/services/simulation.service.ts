@@ -3,7 +3,9 @@ import {
   NotFoundException,
   ForbiddenException,
   BadRequestException,
-  Logger
+  Logger,
+  Inject,
+  forwardRef
 } from '@nestjs/common';
 import { Simulation, SimulationStatus, PaymentMethod } from '../entities/simulation.entity';
 import { CreateSimulationDto } from '../dto/create-simulation.dto';
@@ -17,6 +19,7 @@ import type {
 import { InjectSimulationRepository } from '../decorators/inject-simulation-repository.decorator';
 import { User } from '../../users/entities/user.entity';
 import { UsersService } from '../../users/users.service';
+import { SimulationStats } from '../interfaces/simulation.interface';
 
 @Injectable()
 export class SimulationService {
@@ -26,6 +29,7 @@ export class SimulationService {
     @InjectSimulationRepository()
     private readonly simulationRepository: ISimulationRepository,
     private readonly calculatorService: SimulationCalculatorService,
+    @Inject(forwardRef(() => UsersService))
     private readonly usersService: UsersService,
   ) { }
 
@@ -217,16 +221,7 @@ export class SimulationService {
   /**
    * Obtener estadísticas del usuario
    */
-  async getStatsByUser(userOrId: User | number): Promise<{
-    totalSimulations: number;
-    activeSimulations: number;
-    completedSimulations: number;
-    pausedSimulations: number;
-    totalInvested: number;
-    totalProjectedReturns: number;
-    averageReturnRate: number;
-    userActiveDays: number;
-  }> {
+  async getStatsByUser(userOrId: User | number): Promise<SimulationStats> {
     try {
       // Determinar userId y usuario
       let userId: number;
@@ -260,6 +255,10 @@ export class SimulationService {
         userActiveDays: user?.createdAt ?
           Math.floor((new Date().getTime() - user.createdAt.getTime()) / (1000 * 60 * 60 * 24))
           : 0,
+        lastSimulationDate: simulations.length > 0
+          ? simulations.reduce((latest, s) =>
+              s.createdAt > latest ? s.createdAt : latest, simulations[0].createdAt).toISOString()
+          : undefined,
       };
 
       return stats;

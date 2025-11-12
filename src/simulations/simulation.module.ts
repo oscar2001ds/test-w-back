@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { SimulationController } from './simulation.controller';
 import { SimulationService } from './services/simulation.service';
@@ -11,7 +11,7 @@ import { UsersModule } from '../users/users.module';
 @Module({
   imports: [
     SequelizeModule.forFeature([Simulation]),
-    UsersModule,
+    forwardRef(() => UsersModule),
   ],
   controllers: [SimulationController],
   providers: [

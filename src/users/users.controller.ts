@@ -10,6 +10,7 @@ import {
   HttpStatus,
   HttpCode,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { Public } from '../common/decorators/public.decorator';
 import { GetUser } from '../common/decorators/get-user.decorator';
@@ -24,14 +25,16 @@ import {
   ApiNotFoundResponse,
   ApiConflictResponse,
   ApiForbiddenResponse,
+  ApiQuery,
 } from '@nestjs/swagger';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ChangeRoleDto } from './dto/change-role.dto';
+import { RoleDto } from './dto/role.dto';
 import { AuthorizationService } from './services/authorization.service';
 import { User } from './entities/user.entity';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { UserRole } from 'src/common/enums/user-role.enum';
 
 @ApiTags('Users')
 @Controller('users')
@@ -39,11 +42,11 @@ export class UsersController {
   constructor(
     private readonly usersService: UsersService,
     private readonly authorizationService: AuthorizationService,
-  ) {}
+  ) { }
 
   @UseGuards(JwtAuthGuard)
   @Post()
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Crear nuevo usuario',
     description: 'Crea un nuevo usuario - requiere permisos según jerarquía de roles'
   })
@@ -63,12 +66,12 @@ export class UsersController {
   ) {
     // Validar que el usuario actual puede crear usuarios con el rol especificado
     this.authorizationService.validateUserCreation(currentUser, createUserDto.role);
-    
+
     return this.usersService.create(createUserDto);
   }
 
   @Get()
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Obtener todos los usuarios',
     description: 'Retorna una lista de todos los usuarios activos'
   })
@@ -80,8 +83,26 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
+  @Get('role-with-stats')
+  @ApiOperation({
+    summary: 'Obtener todos los usuarios de un rol con sus estadísticas',
+    description: 'Retorna una lista de todos los usuarios de un rol específico con sus estadísticas'
+  })
+  @ApiOkResponse({
+    description: 'Lista de usuarios obtenida exitosamente',
+  })
+  @ApiBearerAuth('JWT-auth')
+  @ApiQuery({
+    name: 'role',
+    description: 'Rol de los usuarios',
+    type: 'string',
+  })
+  findAllByRoleWithStats(@Query('role') role: UserRole) {
+    return this.usersService.findAllByRoleWithStats(role);
+  }
+
   @Get(':id')
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Obtener usuario por ID',
     description: 'Retorna un usuario específico por su ID'
   })
@@ -104,7 +125,7 @@ export class UsersController {
 
   @UseGuards(JwtAuthGuard)
   @Patch(':id')
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Actualizar usuario',
     description: 'Actualiza los datos de un usuario existente según permisos'
   })
@@ -129,21 +150,21 @@ export class UsersController {
   @ApiBearerAuth('JWT-auth')
   async update(
     @GetUser() currentUser: User,
-    @Param('id', ParseIntPipe) id: number, 
+    @Param('id', ParseIntPipe) id: number,
     @Body() updateUserDto: UpdateUserDto,
   ) {
     // Obtener el usuario objetivo
     const targetUser = await this.usersService.findOne(id);
-    
+
     // Validar permisos de modificación
     this.authorizationService.validateUserModification(currentUser, targetUser as any);
-    
+
     return this.usersService.update(id, updateUserDto);
   }
 
   @UseGuards(JwtAuthGuard)
   @Patch(':id/role')
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Cambiar rol de usuario',
     description: 'Cambia el rol de un usuario según la jerarquía de permisos'
   })
@@ -166,21 +187,21 @@ export class UsersController {
   async changeRole(
     @GetUser() currentUser: User,
     @Param('id', ParseIntPipe) id: number,
-    @Body() changeRoleDto: ChangeRoleDto,
+    @Body() changeRoleDto: RoleDto,
   ) {
     // Obtener el usuario objetivo
     const targetUserResponse = await this.usersService.findOne(id);
     const targetUser = { ...targetUserResponse, role: targetUserResponse.role } as User;
-    
+
     // Validar permisos de cambio de rol
     this.authorizationService.validateRoleChange(currentUser, targetUser, changeRoleDto.role);
-    
+
     return this.usersService.changeRole(id, changeRoleDto);
   }
 
   @UseGuards(JwtAuthGuard)
   @Get('assignable-roles')
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Obtener roles asignables',
     description: 'Retorna los roles que el usuario actual puede asignar'
   })
@@ -206,7 +227,7 @@ export class UsersController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Eliminar usuario',
     description: 'Elimina permanentemente un usuario del sistema'
   })
@@ -229,7 +250,7 @@ export class UsersController {
   }
 
   @Patch(':id/deactivate')
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Desactivar usuario',
     description: 'Desactiva un usuario (eliminación lógica)'
   })
