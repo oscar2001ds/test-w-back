@@ -32,7 +32,7 @@ export const CREATABLE_ROLES: Record<UserRole, UserRole[]> = {
 export const MODIFIABLE_ROLES: Record<UserRole, UserRole[]> = {
   [UserRole.SUPER_ADMIN]: [UserRole.ADMIN, UserRole.SUPERVISOR, UserRole.CLIENT],
   [UserRole.ADMIN]: [UserRole.SUPERVISOR, UserRole.CLIENT],
-  [UserRole.SUPERVISOR]: [],
+  [UserRole.SUPERVISOR]: [UserRole.CLIENT],
   [UserRole.CLIENT]: [], // Solo su propio perfil, pero no cambio de rol
 };
 
