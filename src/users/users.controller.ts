@@ -1,0 +1,169 @@
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  ParseIntPipe,
+  HttpStatus,
+  HttpCode,
+  UseGuards,
+  Query,
+} from '@nestjs/common';
+import { GetUser } from '../common/decorators/get-user.decorator';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiParam,
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiNotFoundResponse,
+  ApiConflictResponse,
+  ApiForbiddenResponse,
+  ApiQuery,
+} from '@nestjs/swagger';
+import { UsersService } from './users.service';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { AuthorizationService } from './services/authorization.service';
+import { User } from './entities/user.entity';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { UserRole } from 'src/common/enums/user-role.enum';
+
+@ApiTags('Users')
+@Controller('users')
+@UseGuards(JwtAuthGuard)
+export class UsersController {
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly authorizationService: AuthorizationService,
+  ) { }
+
+  @Post()
+  @ApiOperation({
+    summary: 'Crear nuevo usuario',
+    description: 'Crea un nuevo usuario - requiere permisos según jerarquía de roles'
+  })
+  @ApiCreatedResponse({
+    description: 'Usuario creado exitosamente',
+  })
+  @ApiConflictResponse({
+    description: 'Email o username ya están en uso',
+  })
+  @ApiForbiddenResponse({
+    description: 'No tiene permisos para asignar este rol',
+  })
+  @ApiBearerAuth('JWT-auth')
+  async create(
+    @GetUser() currentUser: User,
+    @Body() createUserDto: CreateUserDto,
+  ) {
+    this.authorizationService.validateUserCreation(currentUser, createUserDto.role);
+
+    return this.usersService.create(createUserDto);
+  }
+
+
+  @Get('role-with-stats')
+  @ApiOperation({
+    summary: 'Obtener todos los usuarios de un rol con sus estadísticas',
+    description: 'Retorna una lista de todos los usuarios de un rol específico con sus estadísticas'
+  })
+  @ApiOkResponse({
+    description: 'Lista de usuarios obtenida exitosamente',
+  })
+  @ApiBearerAuth('JWT-auth')
+  @ApiQuery({
+    name: 'role',
+    description: 'Rol de los usuarios',
+    type: 'string',
+  })
+  findAllByRoleWithStats(@GetUser() currentUser: User, @Query('role') role: UserRole) {
+    this.authorizationService.validateUserListAccess(currentUser, role);
+    return this.usersService.findAllByRoleWithStats(role);
+  }
+
+
+  @Get('overview-stats')
+  @ApiOperation({
+    summary: 'Obtener estadísticas generales de usuarios por rol',
+    description: 'Retorna estadísticas generales sobre los usuarios agrupados por rol'
+  })
+  @ApiOkResponse({
+    description: 'Estadísticas obtenidas exitosamente',
+  })
+  @ApiBearerAuth('JWT-auth')
+  @ApiQuery({
+    name: 'role',
+    description: 'Rol de los usuarios',
+    type: 'string',
+  })
+  overviewStats(@GetUser() currentUser: User, @Query('role') role: UserRole) {
+    this.authorizationService.validateUserListAccess(currentUser, role);
+    return this.usersService.getOverviewStats(role);
+  }
+
+
+  @Patch(':id')
+  @ApiOperation({
+    summary: 'Actualizar usuario',
+    description: 'Actualiza los datos de un usuario existente según permisos'
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'ID del usuario',
+    type: 'number',
+    example: 1
+  })
+  @ApiOkResponse({
+    description: 'Usuario actualizado exitosamente',
+  })
+  @ApiNotFoundResponse({
+    description: 'Usuario no encontrado',
+  })
+  @ApiConflictResponse({
+    description: 'Email o username ya están en uso',
+  })
+  @ApiForbiddenResponse({
+    description: 'No tiene permisos para modificar este usuario',
+  })
+  @ApiBearerAuth('JWT-auth')
+  async update(
+    @GetUser() currentUser: User,
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
+    const targetUser = await this.usersService.findOne(id);
+    this.authorizationService.validateUserModification(currentUser, targetUser as any);
+    return this.usersService.update(id, updateUserDto);
+  }
+
+  
+  @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({
+    summary: 'Eliminar usuario',
+    description: 'Elimina permanentemente un usuario del sistema'
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'ID del usuario',
+    type: 'number',
+    example: 1
+  })
+  @ApiResponse({
+    status: 204,
+    description: 'Usuario eliminado exitosamente',
+  })
+  @ApiNotFoundResponse({
+    description: 'Usuario no encontrado',
+  })
+  @ApiBearerAuth('JWT-auth')
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.usersService.remove(id);
+  }
+}
