@@ -1,29 +1,12 @@
-# 🏦 Test W - Sistema de Simulaciones Financieras
+# 🏦 Test Banco W - Sistema de Simulaciones Financieras
 
 Sistema backend desarrollado para **Banco W** que permite gestionar usuarios y simular productos financieros con cálculos de inversión, autenticación JWT y autorización basada en roles.
 
-## 📋 Tabla de Contenido
-
-- [Características](#características)
-- [Tecnologías](#tecnologías)
-- [Requisitos Previos](#requisitos-previos)
-- [Instalación](#instalación)
-- [Configuración](#configuración)
-- [Ejecución](#ejecución)
-- [Scripts Disponibles](#scripts-disponibles)
-- [Estructura del Proyecto](#estructura-del-proyecto)
-- [API Endpoints](#api-endpoints)
-- [Sistema de Roles](#sistema-de-roles)
-- [Base de Datos](#base-de-datos)
-- [Arquitectura](#arquitectura)
-
-## ✨ Características
+## 🚀 Características Principales
 
 ### 🔐 **Sistema de Autenticación**
 - Login con JWT y refresh tokens
 - Autenticación mediante cookies HTTP-only
-- Protección contra ataques XSS y CSRF
-- Logout con invalidación de tokens
 
 ### 👥 **Gestión de Usuarios**
 - CRUD completo de usuarios
@@ -33,11 +16,8 @@ Sistema backend desarrollado para **Banco W** que permite gestionar usuarios y s
 
 ### 💰 **Simulaciones Financieras**
 - Creación y gestión de simulaciones de inversión
-- Cálculo automático de valores futuros
-- Múltiples métodos de pago (mensual, anual)
-- Validación de rangos de fechas y montos
-- Estadísticas agregadas por usuario
-- Estados de simulación (activa, completada, pausada)
+- Cálculo automático de tasa de interés
+- Manejo de estados de simulación (activa, completada, pausada)
 
 ### 📊 **Reportes y Estadísticas**
 - Estadísticas de usuarios por rol
@@ -50,10 +30,9 @@ Sistema backend desarrollado para **Banco W** que permite gestionar usuarios y s
 - **Framework**: NestJS 11
 - **Lenguaje**: TypeScript
 - **Base de Datos**: MySQL con Sequelize ORM
-- **Autenticación**: JWT + Passport.js
-- **Validación**: Class Validator + Class Transformer
+- **Autenticación**: JWT
+- **Validación**: Class Validator
 - **Documentación**: Swagger/OpenAPI
-- **Testing**: Jest
 
 ## 📋 Requisitos Previos
 
@@ -64,7 +43,7 @@ Antes de comenzar, asegúrate de tener instalado:
 - **MySQL** >= 8.0.0
 - **Git**
 
-## 🚀 Instalación
+## 🚀 Instalación y Ejecución
 
 ### 1. **Clonar el repositorio**
 ```bash
@@ -78,20 +57,21 @@ npm install
 ```
 
 ### 3. **Crear base de datos MySQL**
-Conecta a tu servidor MySQL y crea la base de datos:
+Si usas una herramienta como DBeaver, TablePlus o MySQL Workbench,
+puedes crear una base de datos llamada '***test-w***' directamente desde la interfaz.
+
+En caso contrario, conéctate a tu servidor MySQL y ejecútalo manualmente con el siguiente comando:
 ```sql
 CREATE DATABASE `test-w` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ```
 
-## ⚙️ Configuración
-
-### 1. **Variables de Entorno**
+### 4. **Variables de Entorno**
 Copia el archivo de ejemplo y configura las variables:
 ```bash
 cp .env.example .env
 ```
 
-### 2. **Editar archivo .env**
+### 5. **Editar archivo .env**
 Modifica las siguientes variables según tu entorno:
 
 ```bash
@@ -120,16 +100,19 @@ JWT_REFRESH_SECRET=tu-clave-secreta-refresh-muy-segura
 
 > **⚠️ Importante**: Cambia los valores de `JWT_SECRET` y `JWT_REFRESH_SECRET` por claves seguras en producción.
 
-## 🚀 Ejecución
-
-### **Desarrollo (con datos de prueba)**
+### 6. **Desarrollo (con datos de prueba)**
 ```bash
-# Inicializar base de datos con datos semilla
+# Este comando inicializa base de datos y carga las tablas con datos semilla
 npm run initDB
 
 # Iniciar servidor en modo desarrollo
 npm run start:dev
 ```
+La aplicación estará disponible en: `http://localhost:4000`
+
+Documentación Swagger: `http://localhost:4000/api`
+
+## ➕ Comandos Extra
 
 ### **Solo sincronización de base de datos**
 ```bash
@@ -154,10 +137,6 @@ npm run build
 # Ejecutar en producción
 npm run start:prod
 ```
-
-La aplicación estará disponible en: `http://localhost:4000`
-
-Documentación Swagger: `http://localhost:4000/api`
 
 ## 📜 Scripts Disponibles
 
@@ -227,12 +206,10 @@ src/
 - `POST /auth/refresh` - Renovar token
 
 ### **Usuarios**
-- `GET /users` - Listar usuarios (público)
-- `POST /users` - Crear usuario (requiere permisos)
-- `GET /users/:id` - Obtener usuario por ID
+- `POST /users` - Crear usuario
+- `GET /users/role-with-stats` - Obtener usuarios por rol con estadísticas.
+- `GET /users/overview-stats` - Obtener estadísticas generales de usuarios
 - `PATCH /users/:id` - Actualizar usuario
-- `PATCH /users/:id/role` - Cambiar rol de usuario
-- `GET /users/role-with-stats` - Usuarios por rol con estadísticas
 - `DELETE /users/:id` - Eliminar usuario
 
 ### **Simulaciones**
@@ -254,11 +231,10 @@ src/
 
 | Acción | Super Admin | Admin | Supervisor | Cliente |
 |--------|:-----------:|:-----:|:----------:|:-------:|
-| Crear usuarios | ✅ Todos | ✅ Sup./Client. | ✅ Solo Client. | ❌ |
-| Ver usuarios | ✅ Todos | ✅ Inf. jerarquía | ✅ Inf. jerarquía | ✅ Solo propio |
+| Ver usuarios | ✅ Todos | ✅ jerarquía Inferior | ✅ jerarquía Inferior | ✅ Solo propio |
 | Cambiar roles | ✅ Todos | ✅ Sup./Client. | ✅ Solo Client. | ❌ |
-| Ver simulaciones | ✅ Todas | ✅ Inf. jerarquía | ✅ Inf. jerarquía | ✅ Solo propias |
-| Gestionar simul. | ✅ Todas | ✅ Inf. jerarquía | ✅ Inf. jerarquía | ✅ Solo propias |
+| Ver simulaciones | ✅ Todas | ✅ jerarquía Inferior | ✅ jerarquía Inferior | ✅ Solo propias |
+| Gestionar simul. | ✅ Todas | ✅ jerarquía Inferior | ✅ jerarquía Inferior | ✅ Solo propias |
 
 ## 🗄️ Base de Datos
 
@@ -282,36 +258,12 @@ El sistema incluye datos de prueba:
 - **85+ simulaciones** con escenarios variados
 - Datos apropiados para testing y desarrollo
 
-## 🏗️ Arquitectura
+## 🎉 Conclusión
 
-### **Patrones Implementados**
-- **Repository Pattern**: Abstracción de acceso a datos
-- **Service Layer**: Lógica de negocio centralizada
-- **DTO Pattern**: Validación y transformación de datos
-- **Guard Pattern**: Control de acceso y autenticación
-- **Decorator Pattern**: Funcionalidades transversales
-
-### **Principios SOLID**
-- **Single Responsibility**: Cada clase tiene una responsabilidad específica
-- **Open/Closed**: Extensible mediante interfaces
-- **Liskov Substitution**: Interfaces bien definidas
-- **Interface Segregation**: Interfaces pequeñas y específicas
-- **Dependency Inversion**: Inyección de dependencias
-
-### **Características Técnicas**
-- **Validación robusta**: Class-validator en DTOs
-- **Manejo de errores**: Filtros de excepción centralizados
-- **Logging**: Sistema de logs estructurado
-- **Seguridad**: JWT, CORS, validación de entrada
-- **Documentación**: Swagger auto-generado
+Gracias por tomarse el tiempo de revisar mi prueba. La desarrollé con mucho esfuerzo y dedicación, buscando entregar un resultado que realmente valiera la pena.  
+Si tienen alguna inquietud o comentario, pueden contactarme al número de abajo. Un Saludo, espero podernos ver pronto!
+- 🟢 WhatsApp: 3124204039 
 
 ---
 
-## 📄 Licencia
-
-Este proyecto es privado y confidencial para **Banco W**.
-
-## 👨‍💻 Desarrollador
-
-**Oscar David Díaz Santos**  
-Desarrollado para la prueba técnica de Banco W
+**Desarrollado con ❤️**
