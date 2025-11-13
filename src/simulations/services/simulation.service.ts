@@ -39,7 +39,6 @@ export class SimulationService {
   async create(userId: number, createSimulationDto: CreateSimulationDto): Promise<Simulation> {
     this.logger.log(`Creando simulación para usuario ${userId}`);
 
-    // Validar rango de fechas
     const dateValidation = this.calculatorService.validateDateRange(
       createSimulationDto.startDate,
       createSimulationDto.endDate
@@ -49,7 +48,6 @@ export class SimulationService {
       throw new BadRequestException(dateValidation.errors.join(', '));
     }
 
-    // Calcular datos automáticos
     const termMonths = this.calculatorService.calculateTermMonths(
       createSimulationDto.startDate,
       createSimulationDto.endDate
@@ -69,8 +67,8 @@ export class SimulationService {
         amount: createSimulationDto.amount,
         currency: createSimulationDto.currency || 'COP',
         paymentMethod: createSimulationDto.paymentMethod,
-        startDate: new Date(createSimulationDto.startDate),
-        endDate: new Date(createSimulationDto.endDate),
+        startDate: new Date(createSimulationDto.startDate.split('T')[0].concat('T00:00:00')),
+        endDate: new Date(createSimulationDto.endDate.split('T')[0].concat('T00:00:00')),
         termMonths,
         returnRate,
         status: SimulationStatus.ACTIVE,
@@ -161,10 +159,10 @@ export class SimulationService {
 
       // Convertir fechas a Date objects
       if (updateSimulationDto.startDate) {
-        updates.startDate = new Date(updateSimulationDto.startDate);
+        updates.startDate = new Date(updateSimulationDto.startDate.split('T')[0].concat('T00:00:00'));
       }
       if (updateSimulationDto.endDate) {
-        updates.endDate = new Date(updateSimulationDto.endDate);
+        updates.endDate = new Date(updateSimulationDto.endDate.split('T')[0].concat('T00:00:00'));
       }
     }
 
@@ -257,7 +255,7 @@ export class SimulationService {
           : 0,
         lastSimulationDate: simulations.length > 0
           ? simulations.reduce((latest, s) =>
-              s.createdAt > latest ? s.createdAt : latest, simulations[0].createdAt).toISOString()
+            s.createdAt > latest ? s.createdAt : latest, simulations[0].createdAt).toISOString()
           : undefined,
       };
 
