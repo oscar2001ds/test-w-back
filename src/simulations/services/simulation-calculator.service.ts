@@ -104,11 +104,7 @@ export class SimulationCalculatorService {
     const errors: string[] = [];
     const start = new Date(startDate);
     const end = new Date(endDate);
-    
-    // Limpiar horas para comparación solo por fecha
-    start.setHours(0, 0, 0, 0);
-    end.setHours(0, 0, 0, 0);
-    
+        
     // Validar fechas válidas
     if (isNaN(start.getTime())) {
       errors.push('La fecha de inicio no es válida');
