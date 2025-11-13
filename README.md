@@ -236,7 +236,76 @@ src/
 | Ver simulaciones | ✅ Todas | ✅ jerarquía Inferior | ✅ jerarquía Inferior | ✅ Solo propias |
 | Gestionar simul. | ✅ Todas | ✅ jerarquía Inferior | ✅ jerarquía Inferior | ✅ Solo propias |
 
-## 🗄️ Base de Datos
+## � Sistema de Tasas de Interés
+
+### **📈 Tasas Base por Plazo**
+
+El sistema implementa una tabla de tasas progresiva según el plazo de inversión:
+
+| **Plazo** | **Tasa Anual** | **Descripción** |
+|-----------|:--------------:|-----------------|
+| 1-6 meses | **8.0%** | Inversiones a corto plazo |
+| 7-12 meses | **9.5%** | Inversiones a mediano plazo |
+| 13-24 meses | **11.0%** | Inversiones a largo plazo |
+| 25-36 meses | **12.5%** | Inversiones extendidas |
+| 37-60 meses | **14.0%** | Inversiones a 5 años |
+| 61-120 meses | **15.5%** | Inversiones a 10 años |
+| 121+ meses | **17.0%** | Inversiones a muy largo plazo |
+
+### **🎁 Sistema de Bonificaciones**
+
+Se aplican bonos adicionales automáticamente según el monto invertido:
+
+| **Monto de Inversión** | **Bonificación** | **Ejemplo** |
+|------------------------|:----------------:|-------------|
+| **$100M+** | **+0.5%** | 14.0% → 14.5% |
+| **$50M - $99M** | **+0.3%** | 14.0% → 14.3% |
+| **$10M - $49M** | **+0.1%** | 14.0% → 14.1% |
+| **Menos de $10M** | **Sin bono** | Tasa base |
+
+### **⚡ Bonificación por Método de Pago**
+
+- **Pago Anual**: **+0.5%** adicional
+- **Pago Mensual**: Tasa base (sin penalización)
+
+### **⚠️ Sistema de Penalizaciones**
+
+| **Condición** | **Penalización** | **Motivo** |
+|---------------|:----------------:|------------|
+| **Plazo < 6 meses** | **-1.0%** | Inversión muy corta |
+
+### **🧮 Ejemplo de Cálculo**
+
+**Simulación:** $75,000,000 COP por 36 meses con pago anual
+
+1. **Tasa base** (25-36 meses): `12.5%`
+2. **Bonificación por monto** ($50M+): `+0.3%`
+3. **Bonificación pago anual**: `+0.5%`
+4. **Tasa final**: `12.5% + 0.3% + 0.5% = 13.3%`
+
+### **🔒 Validaciones del Sistema**
+
+- **Tasa mínima**: 5% (protección al cliente)
+- **Tasa máxima**: 25% (límite regulatorio)
+- **Plazo mínimo**: 1 mes
+- **Plazo máximo**: 50 años (600 meses)
+- **Fecha inicio**: No puede ser anterior a hoy
+
+### **📊 Cálculos Financieros**
+
+El sistema implementa fórmulas financieras estándar:
+
+- **Valor Futuro**: `FV = PV × (1 + r)^n`
+- **Pago Periódico**: `PMT = FV × r / ((1 + r)^n - 1)`
+- **Tasa Anualizada**: `((FV/PV)^(1/años)) - 1`
+
+Donde:
+- `PV` = Valor Presente (monto inicial)
+- `FV` = Valor Futuro
+- `r` = Tasa por período
+- `n` = Número de períodos
+
+## �🗄️ Base de Datos
 
 ### **Tablas Principales**
 
