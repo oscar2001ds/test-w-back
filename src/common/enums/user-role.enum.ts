@@ -32,8 +32,18 @@ export const CREATABLE_ROLES: Record<UserRole, UserRole[]> = {
 export const MODIFIABLE_ROLES: Record<UserRole, UserRole[]> = {
   [UserRole.SUPER_ADMIN]: [UserRole.ADMIN, UserRole.SUPERVISOR, UserRole.CLIENT],
   [UserRole.ADMIN]: [UserRole.SUPERVISOR, UserRole.CLIENT],
-  [UserRole.SUPERVISOR]: [UserRole.CLIENT],
+  [UserRole.SUPERVISOR]: [],
   [UserRole.CLIENT]: [], // Solo su propio perfil, pero no cambio de rol
+};
+
+/**
+ * Roles que cada rol puede acceder (en listas de usuarios)
+ */
+export const ACCESSIBLE_USERS_ROLES: Record<UserRole, UserRole[]> = {
+  [UserRole.SUPER_ADMIN]: [UserRole.ADMIN, UserRole.SUPERVISOR, UserRole.CLIENT],
+  [UserRole.ADMIN]: [UserRole.SUPERVISOR, UserRole.CLIENT],
+  [UserRole.SUPERVISOR]: [UserRole.CLIENT],
+  [UserRole.CLIENT]: [], // No puede acceder a listas de usuarios
 };
 
 /**
@@ -62,4 +72,11 @@ export function canModifyRole(modifierRole: UserRole, targetRole: UserRole): boo
  */
 export function getAssignableRoles(userRole: UserRole): UserRole[] {
   return CREATABLE_ROLES[userRole];
+}
+
+/**
+* Verifica si un usuario puede solicitar los usuarios de un rol específico
+*/
+export function canUserAccessUsersRole(userRole: UserRole, targetRole: UserRole): boolean {
+  return ACCESSIBLE_USERS_ROLES[userRole].includes(targetRole);
 }

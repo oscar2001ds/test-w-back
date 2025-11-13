@@ -4,6 +4,7 @@ import {
   UserRole,
   canCreateRole,
   canModifyRole,
+  canUserAccessUsersRole,
   getAssignableRoles,
   getRoleLevel
 } from '../../common/enums/user-role.enum';
@@ -59,6 +60,17 @@ export class AuthorizationService {
    */
   getUserAssignableRoles(user: User): UserRole[] {
     return getAssignableRoles(user.role);
+  }
+
+  /**
+  * Valida si el usuario puede acceder a una lista de usuarios según su rol
+  */
+  validateUserListAccess(currentUser: User, targetRole: UserRole): void {
+    if (!canUserAccessUsersRole(currentUser.role, targetRole)) {
+      throw new ForbiddenException(
+        `Su rol '${currentUser.role}' no puede acceder a usuarios con rol '${targetRole}'`
+      );
+    }
   }
 
   /**

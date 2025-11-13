@@ -121,6 +121,14 @@ export class SimulationCalculatorService {
     if (errors.length > 0) {
       return { isValid: false, errors };
     }
+
+    // Validar que la fecha de inicio no sea anterior a hoy
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    if (start < today) {
+      errors.push('La fecha de inicio no puede ser anterior a la fecha actual');
+    }
     
     // La fecha de fin debe ser posterior a la de inicio
     if (end <= start) {

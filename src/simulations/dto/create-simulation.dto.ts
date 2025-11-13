@@ -81,14 +81,9 @@ export class CreateSimulationDto {
   // Validación personalizada para verificar que endDate > startDate
   @ValidateIf((o) => o.startDate && o.endDate)
   get isValidDateRange(): boolean {
-    const start = new Date(this.startDate);
-    const end = new Date(this.endDate);
-    const now = new Date();
-    
-    // La fecha de inicio no puede ser anterior a hoy
-    if (start < now) {
-      throw new Error('La fecha de inicio no puede ser anterior a la fecha actual');
-    }
+    const start = new Date(this.startDate + 'T00:00:00.000Z');
+    const end = new Date(this.endDate + 'T00:00:00.000Z');
+
     
     // La fecha de fin debe ser posterior a la de inicio
     if (end <= start) {
