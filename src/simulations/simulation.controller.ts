@@ -295,39 +295,6 @@ export class SimulationController {
     return simulation.toJSON();
   }
 
-  @Patch(':id/status/user/:userId')
-  @ApiOperation({
-    summary: 'Cambiar estado de simulación',
-    description: 'Actualiza únicamente el estado de una simulación de un usuario. Solo accesible por el mismo usuario o roles superiores.',
-  })
-  @ApiOkResponse({
-    description: 'Estado actualizado exitosamente',
-    type: SimulationResponseDto,
-  })
-  @ApiBadRequestResponse({
-    description: 'Estado inválido',
-  })
-  @ApiForbiddenResponse({
-    description: 'No tiene permisos para editar simulaciones de este usuario',
-  })
-  async updateStatus(
-    @GetUser() authenticatedUser: User,
-    @Param('id', ParseUUIDPipe) id: string,
-    @Param('userId', ParseIntPipe) targetUserId: number,
-    @Body() updateStatusDto: UpdateSimulationStatusDto,
-  ): Promise<SimulationResponseDto> {
-    // Validar autorización: mismo usuario o rol superior
-    await this.authorizationService.validateUserResourceAccess(
-      authenticatedUser,
-      targetUserId,
-      this.usersService
-    );
-
-    const simulation = await this.simulationService.updateStatus(targetUserId, id, updateStatusDto);
-    simulation.returnRate = Math.round(simulation.returnRate * 10000) / 100;
-    return simulation.toJSON();
-  }
-
   @Delete(':id/user/:userId')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({
