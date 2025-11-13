@@ -101,6 +101,24 @@ export class UsersController {
     return this.usersService.findAllByRoleWithStats(role);
   }
 
+  @Get('overview-stats')
+  @ApiOperation({
+    summary: 'Obtener estadísticas generales de usuarios por rol',
+    description: 'Retorna estadísticas generales sobre los usuarios agrupados por rol'
+  })
+  @ApiOkResponse({
+    description: 'Estadísticas obtenidas exitosamente',
+  })
+  @ApiBearerAuth('JWT-auth')
+  @ApiQuery({
+    name: 'role',
+    description: 'Rol de los usuarios',
+    type: 'string',
+  })
+  overviewStats(@Query('role') role: UserRole) {
+    return this.usersService.getOverviewStats(role);
+  }
+
   @Get(':id')
   @ApiOperation({
     summary: 'Obtener usuario por ID',

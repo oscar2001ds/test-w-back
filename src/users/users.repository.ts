@@ -33,13 +33,13 @@ export class UsersRepository {
 
   async findByEmail(email: string): Promise<User | null> {
     return this.userModel.findOne({
-      where: { email, isActive: true } as WhereOptions<User>,
+      where: { email } as WhereOptions<User>,
     });
   }
 
   async findByUsername(username: string): Promise<User | null> {
     return this.userModel.findOne({
-      where: { username, isActive: true } as WhereOptions<User>,
+      where: { username } as WhereOptions<User>,
     });
   }
 
@@ -50,7 +50,6 @@ export class UsersRepository {
           { email: identifier },
           { username: identifier }
         ],
-        isActive: true
       } as any,
     });
   }

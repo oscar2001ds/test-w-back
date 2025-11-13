@@ -12,7 +12,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { RoleDto } from './dto/role.dto';
 import { User } from './entities/user.entity';
-import { UserResponse, UserStatsResponse } from './interfaces/user.interface';
+import { OverviewStats, UserResponse, UserStatsResponse } from './interfaces/user.interface';
 import { SimulationService } from '../simulations/services/simulation.service';
 import { UserRole } from 'src/common/enums/user-role.enum';
 
@@ -58,6 +58,31 @@ export class UsersService {
       };
     });
     return Promise.all(usersWithStats);
+  }
+
+  async getOverviewStats(role: UserRole): Promise<OverviewStats> {
+    const users = await this.usersRepository.findAll({
+      where: { role: role } as any,
+      order: [['createdAt', 'DESC']]
+    });
+    const totalUsers = users.length;
+    const activeUsers = users.filter(user => user.isActive).length;
+    const inactiveUsers = totalUsers - activeUsers;
+    const stats = users.map(async (user) => {
+      return this.simulationService.getStatsByUser(user.id);
+    });
+    const resolvedStats = await Promise.all(stats);
+    const totalInvested = resolvedStats.reduce((sum, userStats) => sum + userStats.totalInvested, 0);
+    const totalReturnRate = resolvedStats.reduce((sum, userStats) => sum + userStats.averageReturnRate, 0);
+    const averageReturn = totalUsers > 0 ? totalReturnRate * 100 / totalUsers : 0;
+
+    return {
+      totalUsers,
+      activeUsers,
+      inactiveUsers,
+      totalInvestments: totalInvested,
+      averageReturn: averageReturn
+    };
   }
 
   async findOne(id: number): Promise<UserResponse> {

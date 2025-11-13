@@ -40,3 +40,11 @@ export interface LoginCredentials {
   username: string;
   password: string;
 }
+
+export interface OverviewStats {
+  totalUsers: number
+  activeUsers: number
+  inactiveUsers: number
+  totalInvestments: number
+  averageReturn: number
+}
