@@ -291,20 +291,6 @@ Se aplican bonos adicionales automáticamente según el monto invertido:
 - **Plazo máximo**: 50 años (600 meses)
 - **Fecha inicio**: No puede ser anterior a hoy
 
-### **📊 Cálculos Financieros**
-
-El sistema implementa fórmulas financieras estándar:
-
-- **Valor Futuro**: `FV = PV × (1 + r)^n`
-- **Pago Periódico**: `PMT = FV × r / ((1 + r)^n - 1)`
-- **Tasa Anualizada**: `((FV/PV)^(1/años)) - 1`
-
-Donde:
-- `PV` = Valor Presente (monto inicial)
-- `FV` = Valor Futuro
-- `r` = Tasa por período
-- `n` = Número de períodos
-
 ## �🗄️ Base de Datos
 
 ### **Tablas Principales**
