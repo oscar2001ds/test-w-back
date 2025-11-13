@@ -19,17 +19,10 @@ const envSchema = z.object({
   DB_DATABASE_NAME: z.string(),
   DB_SSL_MODE: z.coerce.boolean(),
 
-  MAIL_EMAIL: z.string().email(),
-  MAIL_PASSWORD: z.string(),
-  MAIL_FROM: z.string(),
-
   JWT_SECRET: z.string(),
   JWT_EXPIRES_IN: z.string(),
   JWT_REFRESH_SECRET: z.string(),
   JWT_REFRESH_EXPIRES_IN: z.string(),
-
-  RECAPTCHA_SECRET_KEY: z.string().optional(),
-  DEV_CAPTCHA: z.string().optional(),
 });
 
 export default function validateEnvironmentVariables(

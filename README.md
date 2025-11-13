@@ -1,98 +1,317 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# 🏦 Test W - Sistema de Simulaciones Financieras
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Sistema backend desarrollado para **Banco W** que permite gestionar usuarios y simular productos financieros con cálculos de inversión, autenticación JWT y autorización basada en roles.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## 📋 Tabla de Contenido
 
-## Description
+- [Características](#características)
+- [Tecnologías](#tecnologías)
+- [Requisitos Previos](#requisitos-previos)
+- [Instalación](#instalación)
+- [Configuración](#configuración)
+- [Ejecución](#ejecución)
+- [Scripts Disponibles](#scripts-disponibles)
+- [Estructura del Proyecto](#estructura-del-proyecto)
+- [API Endpoints](#api-endpoints)
+- [Sistema de Roles](#sistema-de-roles)
+- [Base de Datos](#base-de-datos)
+- [Arquitectura](#arquitectura)
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## ✨ Características
 
-## Project setup
+### 🔐 **Sistema de Autenticación**
+- Login con JWT y refresh tokens
+- Autenticación mediante cookies HTTP-only
+- Protección contra ataques XSS y CSRF
+- Logout con invalidación de tokens
 
+### 👥 **Gestión de Usuarios**
+- CRUD completo de usuarios
+- Sistema de roles jerárquico (Super Admin, Admin, Supervisor, Cliente)
+- Autorización granular basada en roles
+- Estadísticas de usuarios por rol
+
+### 💰 **Simulaciones Financieras**
+- Creación y gestión de simulaciones de inversión
+- Cálculo automático de valores futuros
+- Múltiples métodos de pago (mensual, anual)
+- Validación de rangos de fechas y montos
+- Estadísticas agregadas por usuario
+- Estados de simulación (activa, completada, pausada)
+
+### 📊 **Reportes y Estadísticas**
+- Estadísticas de usuarios por rol
+- Métricas de simulaciones por usuario
+- Cálculos de retorno de inversión
+- Dashboard con datos agregados
+
+## 🛠 Tecnologías
+
+- **Framework**: NestJS 11
+- **Lenguaje**: TypeScript
+- **Base de Datos**: MySQL con Sequelize ORM
+- **Autenticación**: JWT + Passport.js
+- **Validación**: Class Validator + Class Transformer
+- **Documentación**: Swagger/OpenAPI
+- **Testing**: Jest
+
+## 📋 Requisitos Previos
+
+Antes de comenzar, asegúrate de tener instalado:
+
+- **Node.js** >= 18.0.0
+- **npm** >= 8.0.0
+- **MySQL** >= 8.0.0
+- **Git**
+
+## 🚀 Instalación
+
+### 1. **Clonar el repositorio**
 ```bash
-$ npm install
+git clone https://github.com/oscar2001ds/test-w-back.git
+cd test-w-back
 ```
 
-## Compile and run the project
-
+### 2. **Instalar dependencias**
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+npm install
 ```
 
-## Run tests
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+### 3. **Crear base de datos MySQL**
+Conecta a tu servidor MySQL y crea la base de datos:
+```sql
+CREATE DATABASE `test-w` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ```
 
-## Deployment
+## ⚙️ Configuración
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
+### 1. **Variables de Entorno**
+Copia el archivo de ejemplo y configura las variables:
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+cp .env.example .env
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+### 2. **Editar archivo .env**
+Modifica las siguientes variables según tu entorno:
 
-## Resources
+```bash
+# ===========================================
+# APPLICATION CONFIGURATION
+# ===========================================
+NODE_ENV=development
+SERVER_PORT=4000
+ROOT_DOMAIN=localhost:4000
 
-Check out a few resources that may come in handy when working with NestJS:
+# ===========================================
+# DATABASE CONFIGURATION
+# ===========================================
+DB_HOST=localhost
+DB_PORT=3306
+DB_USERNAME=tu_usuario_mysql
+DB_PASSWORD=tu_contraseña_mysql
+DB_DATABASE_NAME=test-w
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+# ===========================================
+# JWT CONFIGURATION
+# ===========================================
+JWT_SECRET=tu-clave-secreta-jwt-muy-segura
+JWT_REFRESH_SECRET=tu-clave-secreta-refresh-muy-segura
+```
 
-## Support
+> **⚠️ Importante**: Cambia los valores de `JWT_SECRET` y `JWT_REFRESH_SECRET` por claves seguras en producción.
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+## 🚀 Ejecución
 
-## Stay in touch
+### **Desarrollo (con datos de prueba)**
+```bash
+# Inicializar base de datos con datos semilla
+npm run initDB
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+# Iniciar servidor en modo desarrollo
+npm run start:dev
+```
 
-## License
+### **Solo sincronización de base de datos**
+```bash
+# Sincronizar estructura de tablas (sin datos)
+npm run sync
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+# Poblar con datos semilla
+npm run populate
+```
+
+### **Resetear base de datos completamente**
+```bash
+# Eliminar y recrear base de datos con datos semilla
+npm run restartDB
+```
+
+### **Producción**
+```bash
+# Compilar proyecto
+npm run build
+
+# Ejecutar en producción
+npm run start:prod
+```
+
+La aplicación estará disponible en: `http://localhost:4000`
+
+Documentación Swagger: `http://localhost:4000/api`
+
+## 📜 Scripts Disponibles
+
+| Script | Descripción |
+|--------|-------------|
+| `npm run start:dev` | Ejecuta en modo desarrollo con auto-recarga |
+| `npm run start:prod` | Ejecuta en modo producción |
+| `npm run build` | Compila el proyecto |
+| `npm run test` | Ejecuta tests unitarios |
+| `npm run test:e2e` | Ejecuta tests end-to-end |
+| `npm run lint` | Ejecuta linter y corrige errores |
+| `npm run format` | Formatea código con Prettier |
+| `npm run sync` | Sincroniza estructura de base de datos |
+| `npm run populate` | Inserta datos semilla |
+| `npm run initDB` | Sincroniza DB e inserta datos semilla |
+| `npm run restartDB` | Recrea DB completamente con datos |
+
+## 📁 Estructura del Proyecto
+
+```
+src/
+├── auth/                     # Módulo de autenticación
+│   ├── dto/                  # DTOs para login/register
+│   ├── guards/               # Guards JWT y Local
+│   ├── strategies/           # Estrategias Passport (JWT, Local)
+│   └── interfaces/           # Interfaces de JWT payload
+├── common/                   # Código compartido
+│   ├── decorators/           # Decoradores personalizados (@Public, @GetUser)
+│   ├── enums/                # Enums (UserRole, etc.)
+│   └── filters/              # Filtros de excepción
+├── config/                   # Configuraciones
+│   ├── database.config.ts    # Configuración Sequelize
+│   ├── jwt.config.ts         # Configuración JWT
+│   └── cors.config.ts        # Configuración CORS
+├── database/                 # Base de datos
+│   ├── database.module.ts    # Módulo de conexión DB
+│   ├── database.service.ts   # Servicio de gestión DB
+│   └── seeds/                # Datos semilla
+├── scripts/                  # Scripts de utilidad
+│   ├── sync.ts              # Sincronización de DB
+│   ├── populate.ts          # Población de datos
+│   └── sync-populate.ts     # Sync + populate combinado
+├── simulations/             # Módulo de simulaciones
+│   ├── dto/                 # DTOs de simulaciones
+│   ├── entities/            # Entidades Sequelize
+│   ├── repositories/        # Patrón Repository
+│   ├── services/            # Lógica de negocio
+│   │   ├── simulation.service.ts          # CRUD simulaciones
+│   │   └── simulation-calculator.service.ts # Cálculos financieros
+│   ├── interfaces/          # Interfaces TypeScript
+│   └── decorators/          # Decoradores de inyección
+├── users/                   # Módulo de usuarios
+│   ├── dto/                 # DTOs de usuarios
+│   ├── entities/            # Entidad User
+│   ├── services/            # Servicios de usuarios
+│   │   └── authorization.service.ts # Lógica de autorización
+│   ├── interfaces/          # Interfaces de respuesta
+│   └── users.repository.ts  # Repository de usuarios
+└── main.ts                  # Punto de entrada de la aplicación
+```
+
+## 🌐 API Endpoints
+
+### **Autenticación**
+- `POST /auth/login` - Iniciar sesión
+- `POST /auth/logout` - Cerrar sesión
+- `POST /auth/refresh` - Renovar token
+
+### **Usuarios**
+- `GET /users` - Listar usuarios (público)
+- `POST /users` - Crear usuario (requiere permisos)
+- `GET /users/:id` - Obtener usuario por ID
+- `PATCH /users/:id` - Actualizar usuario
+- `PATCH /users/:id/role` - Cambiar rol de usuario
+- `GET /users/role-with-stats` - Usuarios por rol con estadísticas
+- `DELETE /users/:id` - Eliminar usuario
+
+### **Simulaciones**
+- `POST /simulations/user/:userId` - Crear simulación
+- `GET /simulations/user/:userId` - Listar simulaciones de usuario
+- `GET /simulations/stats/:userId` - Estadísticas de usuario
+- `PATCH /simulations/:id/user/:userId` - Actualizar simulación
+- `DELETE /simulations/:id/user/:userId` - Eliminar simulación
+
+## 👤 Sistema de Roles
+
+### **Jerarquía de Roles**
+1. **Super Admin** (Nivel 4) - Acceso total
+2. **Admin** (Nivel 3) - Gestión de supervisores y clientes
+3. **Supervisor** (Nivel 2) - Gestión de clientes
+4. **Cliente** (Nivel 1) - Solo sus propios datos
+
+### **Permisos por Rol**
+
+| Acción | Super Admin | Admin | Supervisor | Cliente |
+|--------|:-----------:|:-----:|:----------:|:-------:|
+| Crear usuarios | ✅ Todos | ✅ Sup./Client. | ✅ Solo Client. | ❌ |
+| Ver usuarios | ✅ Todos | ✅ Inf. jerarquía | ✅ Inf. jerarquía | ✅ Solo propio |
+| Cambiar roles | ✅ Todos | ✅ Sup./Client. | ✅ Solo Client. | ❌ |
+| Ver simulaciones | ✅ Todas | ✅ Inf. jerarquía | ✅ Inf. jerarquía | ✅ Solo propias |
+| Gestionar simul. | ✅ Todas | ✅ Inf. jerarquía | ✅ Inf. jerarquía | ✅ Solo propias |
+
+## 🗄️ Base de Datos
+
+### **Tablas Principales**
+
+#### **users**
+- Gestión de usuarios del sistema
+- Roles jerárquicos con validación
+- Soft delete y timestamps automáticos
+- Autenticación con bcrypt
+
+#### **simulations**
+- Simulaciones de productos financieros
+- Cálculos automáticos de retorno
+- Estados y validaciones de fechas
+- Relación FK con users
+
+### **Datos Semilla**
+El sistema incluye datos de prueba:
+- **21 usuarios** con distribución realista de roles
+- **85+ simulaciones** con escenarios variados
+- Datos apropiados para testing y desarrollo
+
+## 🏗️ Arquitectura
+
+### **Patrones Implementados**
+- **Repository Pattern**: Abstracción de acceso a datos
+- **Service Layer**: Lógica de negocio centralizada
+- **DTO Pattern**: Validación y transformación de datos
+- **Guard Pattern**: Control de acceso y autenticación
+- **Decorator Pattern**: Funcionalidades transversales
+
+### **Principios SOLID**
+- **Single Responsibility**: Cada clase tiene una responsabilidad específica
+- **Open/Closed**: Extensible mediante interfaces
+- **Liskov Substitution**: Interfaces bien definidas
+- **Interface Segregation**: Interfaces pequeñas y específicas
+- **Dependency Inversion**: Inyección de dependencias
+
+### **Características Técnicas**
+- **Validación robusta**: Class-validator en DTOs
+- **Manejo de errores**: Filtros de excepción centralizados
+- **Logging**: Sistema de logs estructurado
+- **Seguridad**: JWT, CORS, validación de entrada
+- **Documentación**: Swagger auto-generado
+
+---
+
+## 📄 Licencia
+
+Este proyecto es privado y confidencial para **Banco W**.
+
+## 👨‍💻 Desarrollador
+
+**Oscar David Díaz Santos**  
+Desarrollado para la prueba técnica de Banco W
