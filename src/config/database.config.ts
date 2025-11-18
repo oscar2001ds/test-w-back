@@ -16,8 +16,8 @@ export default registerAs(
     timezone: '+00:00',
     dialectOptions: {
       connectTimeout: 60000,
-      ssl: process.env.NODE_ENV === 'production' 
-        ? { require: true, rejectUnauthorized: false } 
+      ssl: String(process.env.DB_SSL_MODE) === 'true' 
+        ? { require: 'require', rejectUnauthorized: false } 
         : false,
     },
     pool: {

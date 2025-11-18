@@ -60,47 +60,16 @@ export class DatabaseService {
     this.appendLog(logs, `Iniciando sincronización ${dbConfig.database}`);
 
     try {
-      // Conexión a PostgreSQL (sin especificar base de datos para poder crearla)
-      const client = new Client({
-        host: dbConfig.host,
-        port: dbConfig.port as number,
-        user: dbConfig.username,
-        password: dbConfig.password,
-        // Conectamos a la base de datos por defecto 'postgres'
-        database: 'postgres',
-      });
-
-      await client.connect();
-
+      this.appendLog(logs, 'Sincronizando modelos con Sequelize');
+      
       if (drop) {
-        this.appendLog(logs, 'Eliminando base de datos');
-        // Terminar conexiones existentes antes de eliminar la BD
-        await client.query(`
-          SELECT pg_terminate_backend(pid)
-          FROM pg_stat_activity 
-          WHERE datname = '${dbConfig.database}' AND pid <> pg_backend_pid()
-        `);
-        await client.query(`DROP DATABASE IF EXISTS "${dbConfig.database}"`);
-        this.appendLog(logs, 'Creando base de datos');
+        this.appendLog(logs, 'Eliminando y recreando tablas');
+        await this.sequelize.sync({ force: true });
+      } else {
+        this.appendLog(logs, 'Sincronizando estructura de tablas');
+        await this.sequelize.sync({ alter: true });
       }
       
-      // Verificar si la base de datos existe
-      const dbExists = await client.query(
-        `SELECT 1 FROM pg_database WHERE datname = $1`,
-        [dbConfig.database]
-      );
-
-      if (dbExists.rows.length === 0) {
-        this.appendLog(logs, `Creando base de datos: ${dbConfig.database}`);
-        await client.query(`CREATE DATABASE "${dbConfig.database}"`);
-      } else {
-        this.appendLog(logs, `Base de datos ${dbConfig.database} ya existe`);
-      }
-
-      await client.end();
-
-      // Sincronizar modelos con Sequelize
-      await this.sequelize.sync({ force: false, alter: true });
       this.appendLog(logs, 'Base de datos sincronizada correctamente');
     } catch (error) {
       if (error instanceof Error) this.appendLog(logs, error, true);
