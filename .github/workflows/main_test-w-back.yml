@@ -48,6 +48,8 @@ jobs:
             dist/
             package*.json
             node_modules/
+            tsconfig.json
+            src/
 
   deploy:
     runs-on: ubuntu-latest
