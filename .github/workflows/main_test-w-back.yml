@@ -40,6 +40,9 @@ jobs:
       #     JWT_SECRET: test-jwt-secret-for-ci
       #     JWT_REFRESH_SECRET: test-refresh-secret-for-ci
 
+      - name: Init Database for first deployment
+        run: npm run initDB
+
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
