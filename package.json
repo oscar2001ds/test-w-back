@@ -22,8 +22,7 @@
     "sync:drop": "cross-env DROP_DATABASE=true node -r ts-node/register -r tsconfig-paths/register ./src/scripts/sync",
     "populate": "node -r ts-node/register -r tsconfig-paths/register ./src/scripts/populate",
     "initDB": "node -r ts-node/register -r tsconfig-paths/register ./src/scripts/sync-populate",
-    "restartDB": "cross-env DROP_DATABASE=true node -r ts-node/register -r tsconfig-paths/register ./src/scripts/sync-populate",
-    "postinstall": "npm run build"
+    "restartDB": "cross-env DROP_DATABASE=true node -r ts-node/register -r tsconfig-paths/register ./src/scripts/sync-populate"
   },
   "dependencies": {
     "@nestjs/cli": "^11.0.0",
