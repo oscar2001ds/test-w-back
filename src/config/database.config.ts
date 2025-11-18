@@ -4,10 +4,10 @@ import { SequelizeModuleOptions } from '@nestjs/sequelize';
 export default registerAs(
   'database',
   (): SequelizeModuleOptions => ({
-    dialect: 'mysql',
+    dialect: 'postgres',
     host: process.env.DB_HOST || 'localhost',
-    port: Number(process.env.DB_PORT) || 3306,
-    username: process.env.DB_USERNAME || 'root',
+    port: Number(process.env.DB_PORT) || 5432,
+    username: process.env.DB_USERNAME || 'postgres',
     password: process.env.DB_PASSWORD || '',
     database: process.env.DB_DATABASE_NAME || 'test-w',
     autoLoadModels: true,
@@ -15,8 +15,10 @@ export default registerAs(
     logging: process.env.NODE_ENV === 'development' ? console.log : false,
     timezone: '+00:00',
     dialectOptions: {
-      charset: 'utf8mb4',
       connectTimeout: 60000,
+      ssl: process.env.NODE_ENV === 'production' 
+        ? { require: true, rejectUnauthorized: false } 
+        : false,
     },
     pool: {
       max: 10,
@@ -29,8 +31,6 @@ export default registerAs(
       paranoid: true,
       underscored: false,
       freezeTableName: false,
-      charset: 'utf8mb4',
-      collate: 'utf8mb4_unicode_ci',
     },
   }),
 );
