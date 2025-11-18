@@ -29,7 +29,7 @@ Sistema backend desarrollado para **Banco W** que permite gestionar usuarios y s
 
 - **Framework**: NestJS 11
 - **Lenguaje**: TypeScript
-- **Base de Datos**: MySQL con Sequelize ORM
+- **Base de Datos**: PostgreSQL con Sequelize ORM
 - **Autenticación**: JWT
 - **Validación**: Class Validator
 - **Documentación**: Swagger/OpenAPI
@@ -40,7 +40,7 @@ Antes de comenzar, asegúrate de tener instalado:
 
 - **Node.js** >= 18.0.0
 - **npm** >= 8.0.0
-- **MySQL** >= 8.0.0
+- **PostgreSQL** >= 13.0.0
 - **Git**
 
 ## 🚀 Instalación y Ejecución
@@ -56,13 +56,39 @@ cd test-w-back
 npm install
 ```
 
-### 3. **Crear base de datos MySQL**
-Si usas una herramienta como DBeaver, TablePlus o MySQL Workbench,
-puedes crear una base de datos llamada '***test-w***' directamente desde la interfaz.
+### 3. **Crear base de datos PostgreSQL**
 
-En caso contrario, conéctate a tu servidor MySQL y ejecútalo manualmente con el siguiente comando:
-```sql
-CREATE DATABASE `test-w` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+#### **Opción A: Usando herramientas gráficas**
+Si usas herramientas como pgAdmin, DBeaver o TablePlus, puedes crear una base de datos llamada '***test-w***' directamente desde la interfaz.
+
+#### **Opción B: Línea de comandos**
+```bash
+# Conectarse a PostgreSQL como superusuario
+psql -U postgres
+
+# Crear la base de datos
+CREATE DATABASE "test-w" WITH ENCODING 'UTF8';
+
+# Crear usuario (opcional)
+CREATE USER testw_user WITH PASSWORD 'tu_password_seguro';
+GRANT ALL PRIVILEGES ON DATABASE "test-w" TO testw_user;
+
+# Salir
+\q
+```
+
+#### **Opción C: Docker (recomendado para desarrollo)**
+```bash
+# Ejecutar PostgreSQL en Docker
+docker run --name postgres-testw \
+  -e POSTGRES_DB=test-w \
+  -e POSTGRES_USER=postgres \
+  -e POSTGRES_PASSWORD=postgres \
+  -p 5432:5432 \
+  -d postgres:15-alpine
+
+# Verificar que esté funcionando
+docker ps
 ```
 
 ### 4. **Variables de Entorno**
@@ -83,12 +109,12 @@ SERVER_PORT=4000
 ROOT_DOMAIN=localhost:4000
 
 # ===========================================
-# DATABASE CONFIGURATION
+# DATABASE CONFIGURATION (PostgreSQL)
 # ===========================================
 DB_HOST=localhost
-DB_PORT=3306
-DB_USERNAME=tu_usuario_mysql
-DB_PASSWORD=tu_contraseña_mysql
+DB_PORT=5432
+DB_USERNAME=postgres
+DB_PASSWORD=postgres
 DB_DATABASE_NAME=test-w
 
 # ===========================================
