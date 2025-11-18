@@ -198,7 +198,7 @@ export class AuthService {
     return {
       httpOnly: true,
       secure: isProduction, // Solo HTTPS en producción
-      sameSite: 'strict' as const,
+      sameSite: 'none' as const,
       path: '/',
     };
   }
