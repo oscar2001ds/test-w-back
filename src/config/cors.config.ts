@@ -12,6 +12,7 @@ export default registerAs(
       `https://${process.env.CONSOLE_PREFIX}.${process.env.ROOT_DOMAIN}`,
       'http://localhost:3000',
       'https://saporous-leonie-intangily.ngrok-free.dev',
+      'https://test-w-front.netlify.app'
     ],
     credentials: true,
   }),
