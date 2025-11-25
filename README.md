@@ -164,6 +164,14 @@ npm run build
 npm run start:prod
 ```
 
+### **Sincronizar secuencia de IDs en PostgreSQL**
+Si insertaste datos manualmente, migraste desde otro sistema, o tienes errores de clave duplicada en el campo `id` de usuarios, ejecuta este comando para sincronizar la secuencia de IDs:
+
+```bash
+npm run fix-sequence
+```
+Esto ajusta la secuencia interna de PostgreSQL (`users_id_seq`) para que los nuevos usuarios se creen con el siguiente ID disponible y evita errores de duplicidad.
+
 ## 📜 Scripts Disponibles
 
 | Script | Descripción |
